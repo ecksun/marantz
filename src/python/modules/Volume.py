@@ -2,6 +2,7 @@ from action.Action import Action
 from action.SimpleAction import SimpleAction
 from marantz import send_command
 from modules.ActionModule import ActionModule
+from modules.Status import get_status
 
 
 def increasevolume():
@@ -20,6 +21,13 @@ def set_volume(volume):
 def mute(state):
     send_command('PutVolumeMute', state)
 
+def mute_state(state):
+    if state == 'on' or state == 'off':
+        mute(state)
+    else:
+        isMute = get_status()['mute']
+        mute('off' if isMute else 'on')
+
 
 class VolumeAction(Action):
     def add_parser(self, subparsers):
@@ -31,8 +39,11 @@ class VolumeAction(Action):
 class MuteAction(Action):
     def add_parser(self, subparsers):
         inputparser = subparsers.add_parser('mute')
-        inputparser.add_argument('state', choices=['on', 'off'])
-        inputparser.set_defaults(func=lambda args: mute(args.state))
+        inputparser.add_argument('state',
+                                 choices=['on', 'off', 'toggle'],
+                                 default='toggle',
+                                 nargs='?')
+        inputparser.set_defaults(func=lambda args: mute_state(args.state))
 
 
 class VolumeModule(ActionModule):
