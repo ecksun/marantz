@@ -40,5 +40,6 @@ class VolumeModule(ActionModule):
         return [
             SimpleAction('inc', increasevolume),
             SimpleAction('dec', decreasevolume),
-            VolumeAction()
+            VolumeAction(),
+            MuteAction()
         ]
