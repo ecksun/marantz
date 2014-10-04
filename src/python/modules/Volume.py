@@ -18,6 +18,17 @@ def set_volume(volume):
     send_command('PutMasterVolumeSet', vol)
 
 
+def change_volume(volume_change):
+    volume = get_status()['volume']
+    set_volume(volume + volume_change)
+
+def handle_volume(args):
+    if args.set:
+        set_volume(args.volume)
+    else:
+        change_volume(args.volume)
+
+
 def mute(state):
     send_command('PutVolumeMute', state)
 
@@ -33,7 +44,8 @@ class VolumeAction(Action):
     def add_parser(self, subparsers):
         volparser = subparsers.add_parser('volume', aliases=['vol'])
         volparser.add_argument('volume', type=float)
-        volparser.set_defaults(func=lambda args: set_volume(args.volume))
+        volparser.add_argument('--set', action='store_true')
+        volparser.set_defaults(func=handle_volume)
 
 
 class MuteAction(Action):
