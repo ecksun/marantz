@@ -22,4 +22,3 @@ for action in actions:
 args = parser.parse_args()
 
 args.func(args)
-

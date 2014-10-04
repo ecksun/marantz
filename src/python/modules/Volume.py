@@ -14,7 +14,7 @@ def decreasevolume():
 
 
 def set_volume(volume):
-    vol = '%.1f' % (volume)
+    vol = '%.1f' % volume
     send_command('PutMasterVolumeSet', vol)
 
 
@@ -22,22 +22,21 @@ def change_volume(volume_change):
     volume = get_status()['volume']
     set_volume(volume + volume_change)
 
+
 def handle_volume(args):
-    if args.set:
-        set_volume(args.volume)
-    else:
-        change_volume(args.volume)
+    set_volume(args.volume) if args.set else change_volume(args.volume)
 
 
 def mute(state):
     send_command('PutVolumeMute', state)
 
+
 def mute_state(state):
     if state == 'on' or state == 'off':
         mute(state)
     else:
-        isMute = get_status()['mute']
-        mute('off' if isMute else 'on')
+        is_mute = get_status()['mute']
+        mute('off' if is_mute else 'on')
 
 
 class VolumeAction(Action):

@@ -25,4 +25,3 @@ class Input(Action):
 class InputModule(ActionModule):
     def get_actions(self):
         return [Input()]
-

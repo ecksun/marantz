@@ -1,16 +1,17 @@
 import pprint
 import re
+
 from action.SimpleAction import SimpleAction
 from marantz import get
 from modules.ActionModule import ActionModule
 
 
 def get_status():
-    statusXml = get().decode('UTF8')
+    status_xml = get().decode('UTF8')
     return {
-        'volume': float(get_property('MasterVolume', statusXml)),
-        'mute': get_binary(get_property('Mute', statusXml)),
-        'power': get_binary(get_property('Power', statusXml))
+        'volume': float(get_property('MasterVolume', status_xml)),
+        'mute': get_binary(get_property('Mute', status_xml)),
+        'power': get_binary(get_property('Power', status_xml))
     }
 
 
