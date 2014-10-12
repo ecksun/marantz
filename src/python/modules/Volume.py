@@ -1,3 +1,4 @@
+import math
 from action.Action import Action
 from action.SimpleAction import SimpleAction
 from marantz import send_command
@@ -20,7 +21,14 @@ def set_volume(volume):
 
 def change_volume(volume_change):
     volume = get_status()['volume']
-    set_volume(volume + volume_change)
+
+    vol_current = volume
+    target_delta = abs(volume_change)
+    while target_delta > 0:
+        current_change = min(1, target_delta)
+        target_delta -= current_change
+        vol_current += math.copysign(current_change, volume_change)
+        set_volume(vol_current)
 
 
 def handle_volume(args):
