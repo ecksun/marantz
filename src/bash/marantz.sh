@@ -41,7 +41,7 @@ function setInput {
         echo "No such input: $1"
         return
     fi
-    sendCommand "PutZone_InputFunction" "MPLAY"
+    sendCommand "PutZone_InputFunction" "$input"
 }
 
 function mute {
