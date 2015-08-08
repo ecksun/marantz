@@ -4,10 +4,10 @@ import sys
 
 
 class Zones(Enum):
-    MainZone = 'MainZone',
-    Zone2 = 'Zone2',
-    Zone3 = 'Zone3'
     All = 'all'
+    MainZone = 'MainZone'
+    Zone2 = 'Zone2'
+    Zone3 = 'Zone3'
 
     def __str__(self):
         return self.name
@@ -27,7 +27,9 @@ class Zones(Enum):
 
 
 class ZoneHandler:
-    rooms = {}
+    rooms = {
+        'all': Zones.All
+    }
 
     def __init__(self, config):
         if 'ROOMS' in config:
@@ -75,7 +77,7 @@ class RoomParser:
 
         parser.add_argument('--room',
                             type=parse_room,
-                            choices=rooms.keys(),
+                            choices=sorted(rooms.keys()),
                             action=RoomAction,
                             dest='zone',
                             help='A convenient way of specifying --zone by its name'
