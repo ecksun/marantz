@@ -1,4 +1,3 @@
-import pprint
 import re
 
 from action.SimpleAction import SimpleAction
@@ -29,7 +28,11 @@ def get_property(name, xml):
 
 
 def print_status(args):
-    pprint.pprint(get_status(args.zone))
+    status = get_status(args.zone)
+
+    print('{:<16}{}'.format('Power', 'On' if status['power'] else 'Off'))
+    print('{:<16}{}'.format('Zone power', 'On' if status['zonepower'] else 'Off'))
+    print('{:<16}{}{}'.format('Volume', status['volume'], ' (Muted)' if status['mute'] else ''))
 
 
 class StatusModule(ActionModule):
