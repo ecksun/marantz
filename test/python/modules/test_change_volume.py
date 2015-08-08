@@ -2,6 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock, call
 
 from modules.Volume import change_volume
+from zone import Zones
 
 
 class TestVolumeChange(TestCase):
@@ -24,9 +25,9 @@ class TestVolumeChange(TestCase):
                              send_command_mock: MagicMock,
                              get_status_mock: MagicMock):
         get_status_mock.return_value = {'volume': -5}
-        change_volume(-2.5)
+        change_volume(Zones.MainZone, -2.5)
 
-        set_call = lambda vol: call('PutMasterVolumeSet', vol)
+        set_call = lambda vol: call(Zones.MainZone, 'PutMasterVolumeSet', vol)
 
         calls = [set_call(vol) for vol in ['-6.0', '-7.0', '-7.5']]
         send_command_mock.assert_has_calls(calls, any_order=False)

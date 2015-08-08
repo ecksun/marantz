@@ -8,4 +8,4 @@ class SimpleAction(Action):
 
     def add_parser(self, subparsers):
         parser = subparsers.add_parser(self.name)
-        parser.set_defaults(func=lambda _: self.action())
+        parser.set_defaults(func=lambda args: self.action(args))

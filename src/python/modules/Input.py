@@ -7,16 +7,16 @@ class Input(Action):
     def __init__(self, input_names):
         self.input_names = input_names
 
-    def _set_input(self, source_name):
+    def _set_input(self, zone, source_name):
         if source_name not in self.input_names:
             print('No such input: ' + source_name)
             return
-        send_command('PutZone_InputFunction', self.input_names[source_name])
+        send_command(zone, 'PutZone_InputFunction', self.input_names[source_name])
 
     def add_parser(self, subparsers):
         inputparser = subparsers.add_parser('input')
         inputparser.add_argument('input', choices=self.input_names.keys())
-        inputparser.set_defaults(func=lambda args: self._set_input(args.input))
+        inputparser.set_defaults(func=lambda args: self._set_input(args.zone, args.input))
 
 
 class InputModule(ActionModule):

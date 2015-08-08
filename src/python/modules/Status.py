@@ -6,8 +6,8 @@ from marantz import get
 from modules.ActionModule import ActionModule
 
 
-def get_status():
-    status_xml = get().decode('UTF8')
+def get_status(zone):
+    status_xml = get(zone).decode('UTF8')
     return {
         'volume': float(get_property('MasterVolume', status_xml)),
         'mute': get_binary(get_property('Mute', status_xml)),
@@ -27,8 +27,8 @@ def get_property(name, xml):
     return res.group(1)
 
 
-def print_status():
-    pprint.pprint(get_status())
+def print_status(args):
+    pprint.pprint(get_status(args.zone))
 
 
 class StatusModule(ActionModule):

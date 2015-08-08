@@ -6,21 +6,21 @@ from modules.ActionModule import ActionModule
 from modules.Status import get_status
 
 
-def increasevolume():
-    send_command('putmastervolumebtn', '>')
+def increasevolume(args):
+    send_command(args.zone, 'putmastervolumebtn', '>')
 
 
-def decreasevolume():
-    send_command('putmastervolumebtn', '<')
+def decreasevolume(args):
+    send_command(args.zone, 'putmastervolumebtn', '<')
 
 
-def set_volume(volume):
+def set_volume(zone, volume):
     vol = '%.1f' % volume
-    send_command('PutMasterVolumeSet', vol)
+    send_command(zone, 'PutMasterVolumeSet', vol)
 
 
-def change_volume(volume_change):
-    volume = get_status()['volume']
+def change_volume(zone, volume_change):
+    volume = get_status(zone)['volume']
 
     vol_current = volume
     target_delta = abs(volume_change)
@@ -28,23 +28,26 @@ def change_volume(volume_change):
         current_change = min(1, target_delta)
         target_delta -= current_change
         vol_current += math.copysign(current_change, volume_change)
-        set_volume(vol_current)
+        set_volume(zone, vol_current)
 
 
 def handle_volume(args):
-    set_volume(args.volume) if args.set else change_volume(args.volume)
-
-
-def mute(state):
-    send_command('PutVolumeMute', state)
-
-
-def mute_state(state):
-    if state == 'on' or state == 'off':
-        mute(state)
+    if args.set:
+        set_volume(args.zone, args.volume)
     else:
-        is_mute = get_status()['mute']
-        mute('off' if is_mute else 'on')
+        change_volume(args.zone, args.volume)
+
+
+def mute(zone, state):
+    send_command(zone, 'PutVolumeMute', state)
+
+
+def mute_state(zone, state):
+    if state == 'on' or state == 'off':
+        mute(zone, state)
+    else:
+        is_mute = get_status(zone)['mute']
+        mute(zone, 'off' if is_mute else 'on')
 
 
 class VolumeAction(Action):
@@ -62,7 +65,7 @@ class MuteAction(Action):
                                  choices=['on', 'off', 'toggle'],
                                  default='toggle',
                                  nargs='?')
-        inputparser.set_defaults(func=lambda args: mute_state(args.state))
+        inputparser.set_defaults(func=lambda args: mute_state(args.zone, args.state))
 
 
 class VolumeModule(ActionModule):

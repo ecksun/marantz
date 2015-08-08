@@ -8,6 +8,7 @@ from modules.Input import InputModule
 from modules.Power import PowerModule
 from modules.Status import StatusModule
 from modules.Volume import VolumeModule
+from zone import ZoneParser
 
 config = ConfigParser()
 config.read(os.path.expanduser('~/.marantzrc'))
@@ -15,6 +16,7 @@ config.read(os.path.expanduser('~/.marantzrc'))
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(dest='action')
 
+ZoneParser.add_argument(parser)
 
 modules = [InputModule(config), VolumeModule(), PowerModule(), StatusModule()]
 module_actions = map(lambda module: module.get_actions(), modules)
