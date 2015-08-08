@@ -32,7 +32,7 @@ def change_zone_volume(zone, volume_change):
         current_change = min(1, target_delta)
         target_delta -= current_change
         vol_current += math.copysign(current_change, volume_change)
-        set_volume(zone, vol_current)
+        set_zone_volume(zone, vol_current)
 
 
 def set_volume(zones, volume):
