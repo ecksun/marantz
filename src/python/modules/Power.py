@@ -22,10 +22,10 @@ def power(zones, state: Power):
 
 class PowerModule(ActionModule):
     def __init__(self, zone_handler):
-        self.zone_lookup = zone_handler.get_configured_rooms
+        self.get_zones = zone_handler.get_actionable_zones
 
     def get_actions(self):
         return [
-            SimpleAction('on', lambda args: power(self.zone_lookup(args.zone, args), Power.ON)),
-            SimpleAction('off', lambda args: power(self.zone_lookup(args.zone, args), Power.OFF))
+            SimpleAction('on', lambda args: power(self.get_zones(args), Power.ON)),
+            SimpleAction('off', lambda args: power(self.get_zones(args), Power.OFF))
         ]

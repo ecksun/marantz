@@ -45,7 +45,8 @@ class ZoneHandler:
         ZoneParser.add_argument(parser)
         RoomParser.add_argument(self.rooms, parser)
 
-    def get_configured_rooms(self, zone, args):
+    def get_actionable_zones(self, args):
+        zone = args.zone
         if ZoneHandler.configured_rooms_only(args):
             configured_zones = self.rooms.values()
             return [x for x in Zones.get_zones(zone) if x in configured_zones]

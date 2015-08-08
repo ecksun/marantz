@@ -42,6 +42,7 @@ def print_status(zones):
 
 class StatusModule(ActionModule):
     def __init__(self, zone_handler):
-        self.zone_lookup = zone_handler.get_configured_rooms
+        self.get_zones = zone_handler.get_actionable_zones
+
     def get_actions(self):
-        return [SimpleAction('status', lambda args: print_status(self.zone_lookup(args.zone, args)))]
+        return [SimpleAction('status', lambda args: print_status(self.get_zones(args)))]

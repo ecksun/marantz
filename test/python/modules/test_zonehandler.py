@@ -19,7 +19,7 @@ class TestZoneHandler(TestCase):
 
         zone_handler = ZoneHandler(config)
 
-        zones = zone_handler.get_configured_rooms(Zones.All, args)
+        zones = zone_handler.get_actionable_zones(Zones.All, args)
 
         self.assertCountEqual(zones, [Zones.MainZone, Zones.Zone2])
 
@@ -33,6 +33,6 @@ class TestZoneHandler(TestCase):
 
         args = ConfigMock(room=None)
         zone_handler = ZoneHandler(config)
-        zones = zone_handler.get_configured_rooms(Zones.All, args)
+        zones = zone_handler.get_actionable_zones(Zones.All, args)
 
         self.assertCountEqual(zones, [Zones.MainZone, Zones.Zone2, Zones.Zone3])

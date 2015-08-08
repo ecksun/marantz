@@ -57,12 +57,12 @@ def mute_state(zone, given_state):
 
 
 class VolumeAction(Action):
-    def __init__(self, zone_lookup):
-        self.zone_lookup = zone_lookup
+    def __init__(self, get_zones):
+        self.get_zones = get_zones
 
     def add_parser(self, subparsers):
         def _volume_action(args):
-            zones = self.zone_lookup(args.zone)
+            zones = self.get_zones(args)
             if args.set:
                 set_volume(zones, args.volume)
             else:
@@ -75,12 +75,12 @@ class VolumeAction(Action):
 
 
 class MuteAction(Action):
-    def __init__(self, zone_lookup):
-        self.zone_lookup = zone_lookup
+    def __init__(self, get_zones):
+        self.get_zones = get_zones
 
     def add_parser(self, subparsers):
         def _mute_zones(args):
-            for zone in self.zone_lookup(args.zone):
+            for zone in self.get_zones(args):
                 mute_state(zone, args.state)
 
         inputparser = subparsers.add_parser('mute')
@@ -93,12 +93,12 @@ class MuteAction(Action):
 
 class VolumeModule(ActionModule):
     def __init__(self, zone_handler):
-        self.zone_lookup = zone_handler.get_configured_rooms
+        self.get_zones = zone_handler.get_actionable_zones
 
     def get_actions(self):
         return [
-            SimpleAction('inc', lambda args: incdec(self.zone_lookup(args.zone), IncDec.INC)),
-            SimpleAction('dec', lambda args: incdec(self.zone_lookup(args.zone), IncDec.DEC)),
-            VolumeAction(self.zone_lookup),
-            MuteAction(self.zone_lookup)
+            SimpleAction('inc', lambda args: incdec(self.get_zones(args), IncDec.INC)),
+            SimpleAction('dec', lambda args: incdec(self.get_zones(args), IncDec.DEC)),
+            VolumeAction(self.get_zones),
+            MuteAction(self.get_zones)
         ]
