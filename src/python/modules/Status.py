@@ -11,6 +11,7 @@ def get_status(zone):
     return {
         'volume': float(get_property('MasterVolume', status_xml)),
         'mute': get_binary(get_property('Mute', status_xml)),
+        'zonepower': get_binary(get_property('ZonePower', status_xml)),
         'power': get_binary(get_property('Power', status_xml))
     }
 
