@@ -1,17 +1,21 @@
+from enum import Enum
 import math
 from action.Action import Action
 from action.SimpleAction import SimpleAction
 from marantz import send_command
 from modules.ActionModule import ActionModule
 from modules.Status import get_status
+from zone import Zones
 
 
-def increasevolume(args):
-    send_command(args.zone, 'putmastervolumebtn', '>')
+class IncDec(Enum):
+    INC = '>'
+    DEC = '<'
 
 
-def decreasevolume(args):
-    send_command(args.zone, 'putmastervolumebtn', '<')
+def incdec(zones, direction: IncDec):
+    for zone in zones:
+        send_command(zone, 'PutMasterVolumeBtn', direction.value)
 
 
 def set_volume(zone, volume):
@@ -32,22 +36,22 @@ def change_volume(zone, volume_change):
 
 
 def handle_volume(args):
-    if args.set:
-        set_volume(args.zone, args.volume)
-    else:
-        change_volume(args.zone, args.volume)
+    for zone in Zones.get_zones(args.zone):
+        if args.set:
+            set_volume(zone, args.volume)
+        else:
+            change_volume(zone, args.volume)
 
 
-def mute(zone, state):
-    send_command(zone, 'PutVolumeMute', state)
+def mute_state(zone, given_state):
+    def mute(state):
+        send_command(zone, 'PutVolumeMute', state)
 
-
-def mute_state(zone, state):
-    if state == 'on' or state == 'off':
-        mute(zone, state)
+    if given_state == 'on' or given_state == 'off':
+        mute(given_state)
     else:
         is_mute = get_status(zone)['mute']
-        mute(zone, 'off' if is_mute else 'on')
+        mute('off' if is_mute else 'on')
 
 
 class VolumeAction(Action):
@@ -60,19 +64,23 @@ class VolumeAction(Action):
 
 class MuteAction(Action):
     def add_parser(self, subparsers):
+        def _mute_zones(args):
+            for zone in Zones.get_zones(args.zone):
+                mute_state(zone, args.state)
+
         inputparser = subparsers.add_parser('mute')
         inputparser.add_argument('state',
                                  choices=['on', 'off', 'toggle'],
                                  default='toggle',
                                  nargs='?')
-        inputparser.set_defaults(func=lambda args: mute_state(args.zone, args.state))
+        inputparser.set_defaults(func=_mute_zones)
 
 
 class VolumeModule(ActionModule):
     def get_actions(self):
         return [
-            SimpleAction('inc', increasevolume),
-            SimpleAction('dec', decreasevolume),
+            SimpleAction('inc', lambda args: incdec(Zones.get_zones(args.zone), IncDec.INC)),
+            SimpleAction('dec', lambda args: incdec(Zones.get_zones(args.zone), IncDec.DEC)),
             VolumeAction(),
             MuteAction()
         ]
