@@ -12,7 +12,8 @@ def get_status(zone):
         'volume': float(get_property('MasterVolume', status_xml)),
         'mute': get_binary(get_property('Mute', status_xml)),
         'zonepower': get_binary(get_property('ZonePower', status_xml)),
-        'power': get_binary(get_property('Power', status_xml))
+        'power': get_binary(get_property('Power', status_xml)),
+        'input': get_property('InputFuncSelect', status_xml)
     }
 
 
@@ -35,8 +36,10 @@ def print_status(zones):
 
     print('{:<16}{}'.format('Power:', 'On' if main_power else 'Off'))
     for status in statuses:
+        print()
         print('{:<16}{}'.format('Zone:', status['name']))
         print('{:<16}{}'.format('Zone power:', 'On' if status['zonepower'] else 'Off'))
+        print('{:<16}{}'.format('Input:', status['input']))
         print('{:<16}{}{}'.format('Volume:', status['volume'], ' (Muted)' if status['mute'] else ''))
 
 
