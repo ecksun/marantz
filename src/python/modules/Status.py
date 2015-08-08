@@ -3,7 +3,6 @@ import re
 from action.SimpleAction import SimpleAction
 from marantz import get
 from modules.ActionModule import ActionModule
-from zone import Zones
 
 
 def get_status(zone):
@@ -29,8 +28,7 @@ def get_property(name, xml):
     return res.group(1)
 
 
-def print_status(args):
-    zones = Zones.get_zones(args.zone)
+def print_status(zones):
     statuses = list(map(get_status, zones))
 
     main_power = statuses[0]['power']
@@ -43,5 +41,7 @@ def print_status(args):
 
 
 class StatusModule(ActionModule):
+    def __init__(self, zone_handler):
+        self.zone_lookup = zone_handler.get_configured_rooms
     def get_actions(self):
-        return [SimpleAction('status', print_status)]
+        return [SimpleAction('status', lambda args: print_status(self.zone_lookup(args.zone, args)))]

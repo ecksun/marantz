@@ -16,9 +16,15 @@ config.read(os.path.expanduser('~/.marantzrc'))
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(dest='action')
 
-ZoneHandler(config).add_arguments(parser)
+zone_handler = ZoneHandler(config)
+zone_handler.add_arguments(parser)
 
-modules = [InputModule(config), VolumeModule(), PowerModule(), StatusModule()]
+modules = [
+    InputModule(zone_handler, config),
+    VolumeModule(zone_handler),
+    PowerModule(zone_handler),
+    StatusModule(zone_handler)
+]
 module_actions = map(lambda module: module.get_actions(), modules)
 actions = itertools.chain(*module_actions)
 

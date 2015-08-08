@@ -45,6 +45,17 @@ class ZoneHandler:
         ZoneParser.add_argument(parser)
         RoomParser.add_argument(self.rooms, parser)
 
+    def get_configured_rooms(self, zone, args):
+        if ZoneHandler.configured_rooms_only(args):
+            configured_zones = self.rooms.values()
+            return [x for x in Zones.get_zones(zone) if x in configured_zones]
+        else:
+            return Zones.get_zones(zone)
+
+    @staticmethod
+    def configured_rooms_only(args):
+        return args.room is not None
+
 
 class ZoneParser:
     @staticmethod
@@ -69,6 +80,7 @@ class RoomParser:
         class RoomAction(argparse.Action):
             def __call__(self, action_parser, namespace, values, option_string=None):
                 setattr(namespace, 'zone', rooms[values])
+                setattr(namespace, 'room', True)
 
         def parse_room(room):
             if room in rooms:
@@ -79,6 +91,6 @@ class RoomParser:
                             type=parse_room,
                             choices=sorted(rooms.keys()),
                             action=RoomAction,
-                            dest='zone',
-                            help='A convenient way of specifying --zone by its name'
+                            dest='room',
+                            help='Specify --zone by name, all will only use zones mentioned in the config file'
                             )
