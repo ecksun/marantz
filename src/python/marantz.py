@@ -7,7 +7,7 @@ STATUS_URL = 'http://marantz/goform/formMainZone_MainZoneXml.xml'
 
 def get(zone):
     data = parse.urlencode({
-        'ZoneName': zone.name
+        'ZoneName': zone.zone_name
     })
     return request.urlopen(STATUS_URL, data.encode('ascii')).read()
 
@@ -21,5 +21,5 @@ def send_command(zone, command, argument):
     cmd0 = '%s/%s' % (command, argument)
     post({
         'cmd0': cmd0,
-        'ZoneName': zone.name
+        'ZoneName': zone.zone_name
     })

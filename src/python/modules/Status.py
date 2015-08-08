@@ -3,11 +3,13 @@ import re
 from action.SimpleAction import SimpleAction
 from marantz import get
 from modules.ActionModule import ActionModule
+from zone import Zones
 
 
 def get_status(zone):
     status_xml = get(zone).decode('UTF8')
     return {
+        'name': get_property('RenameZone', status_xml).strip(),
         'volume': float(get_property('MasterVolume', status_xml)),
         'mute': get_binary(get_property('Mute', status_xml)),
         'zonepower': get_binary(get_property('ZonePower', status_xml)),
@@ -28,11 +30,16 @@ def get_property(name, xml):
 
 
 def print_status(args):
-    status = get_status(args.zone)
+    zones = Zones.get_zones(args.zone)
+    statuses = list(map(get_status, zones))
 
-    print('{:<16}{}'.format('Power', 'On' if status['power'] else 'Off'))
-    print('{:<16}{}'.format('Zone power', 'On' if status['zonepower'] else 'Off'))
-    print('{:<16}{}{}'.format('Volume', status['volume'], ' (Muted)' if status['mute'] else ''))
+    main_power = statuses[0]['power']
+
+    print('{:<16}{}'.format('Power:', 'On' if main_power else 'Off'))
+    for status in statuses:
+        print('{:<16}{}'.format('Zone:', status['name']))
+        print('{:<16}{}'.format('Zone power:', 'On' if status['zonepower'] else 'Off'))
+        print('{:<16}{}{}'.format('Volume:', status['volume'], ' (Muted)' if status['mute'] else ''))
 
 
 class StatusModule(ActionModule):

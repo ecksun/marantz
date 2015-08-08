@@ -7,9 +7,23 @@ class Zones(Enum):
     MainZone = 'MainZone',
     Zone2 = 'Zone2',
     Zone3 = 'Zone3'
+    All = 'all'
 
     def __str__(self):
         return self.name
+
+    @property
+    def zone_name(self):
+        if self is Zones.All:
+            raise ValueError('All is not a proper zone, this likely means this action is not yet implemented')
+        return self.name
+
+    @staticmethod
+    def get_zones(zone):
+        if zone is Zones.All:
+            return [zone for zone in Zones if zone != Zones.All]
+        else:
+            return [zone]
 
 
 class ZoneHandler:
