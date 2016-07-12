@@ -1,3 +1,4 @@
+from collections import namedtuple
 from enum import Enum
 import math
 
@@ -56,6 +57,20 @@ def mute_state(zone, given_state):
         mute('off' if is_mute else 'on')
 
 
+VolumeChange = namedtuple('VolumeChange', ['type', 'volume'])
+
+
+class VolumeChangeType(Enum):
+    Set = 'SET'
+    Incremental = 'INCDEC'
+
+
+def parse_volume_change(argument: str):
+    if argument.strip().startswith('='):
+        return VolumeChange(VolumeChangeType.Set, float(argument.strip()[1:]))
+    return VolumeChange(VolumeChangeType.Incremental, float(argument))
+
+
 class VolumeAction(Action):
     def __init__(self, get_zones):
         self.get_zones = get_zones
@@ -63,13 +78,13 @@ class VolumeAction(Action):
     def add_parser(self, subparsers):
         def _volume_action(args):
             zones = self.get_zones(args)
-            if args.set:
-                set_volume(zones, args.volume)
+            if args.set or args.volume.type is VolumeChangeType.Set:
+                set_volume(zones, args.volume.volume)
             else:
-                change_volume(zones, args.volume)
+                change_volume(zones, args.volume.volume)
 
         volparser = subparsers.add_parser('volume', aliases=['vol'])
-        volparser.add_argument('volume', type=float)
+        volparser.add_argument('volume', type=parse_volume_change)
         volparser.add_argument('--set', action='store_true')
         volparser.set_defaults(func=_volume_action)
 
