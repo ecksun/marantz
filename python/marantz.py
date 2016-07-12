@@ -9,13 +9,11 @@ def get(zone):
     data = parse.urlencode({
         'ZoneName': zone.zone_name
     })
-    print('getting data {}'.format(data))
     return request.urlopen(STATUS_URL, data.encode('ascii')).read()
 
 
 def post(arguments):
     data = parse.urlencode(arguments)
-    print('posting data {}'.format(data))
     request.urlopen(ACTION_URL, data.encode('ascii'))
 
 
