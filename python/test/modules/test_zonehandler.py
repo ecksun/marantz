@@ -1,9 +1,9 @@
 from collections import namedtuple
 from unittest import TestCase
 
-from zone import Zones, ZoneHandler
+from zone import ZoneHandler, Zones
 
-ConfigMock = namedtuple('Config', ['room'])
+ArgsMock = namedtuple('Config', ['room', 'zone'])
 
 
 class TestZoneHandler(TestCase):
@@ -15,11 +15,11 @@ class TestZoneHandler(TestCase):
             }
         }
 
-        args = ConfigMock(room=True)
+        args = ArgsMock(room=True, zone=Zones.All)
 
         zone_handler = ZoneHandler(config)
 
-        zones = zone_handler.get_actionable_zones(Zones.All, args)
+        zones = zone_handler.get_actionable_zones(args)
 
         self.assertCountEqual(zones, [Zones.MainZone, Zones.Zone2])
 
@@ -31,8 +31,8 @@ class TestZoneHandler(TestCase):
             }
         }
 
-        args = ConfigMock(room=None)
+        args = ArgsMock(room=None, zone=Zones.All)
         zone_handler = ZoneHandler(config)
-        zones = zone_handler.get_actionable_zones(Zones.All, args)
+        zones = zone_handler.get_actionable_zones(args)
 
         self.assertCountEqual(zones, [Zones.MainZone, Zones.Zone2, Zones.Zone3])
