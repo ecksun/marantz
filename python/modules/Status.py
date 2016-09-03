@@ -4,17 +4,32 @@ from action.SimpleAction import SimpleAction
 from marantz import get
 from modules.ActionModule import ActionModule
 
+# There are two volume-scales, this the one with the smallest minimum. Doing this means we wont
+# suddenly increase the volume drastically for either setting.
+MIN_VOLUME = -80
+
 
 def get_status(zone):
     status_xml = get(zone).decode('UTF8')
     return {
         'name': get_property('RenameZone', status_xml).strip(),
-        'volume': float(get_property('MasterVolume', status_xml)),
+        'volume': get_volume(status_xml),
         'mute': get_binary(get_property('Mute', status_xml)),
         'zonepower': get_binary(get_property('ZonePower', status_xml)),
         'power': get_binary(get_property('Power', status_xml)),
         'input': get_property('InputFuncSelect', status_xml)
     }
+
+
+def get_volume(status_xml):
+    raw_volume = get_property('MasterVolume', status_xml)
+    if raw_volume == '--':
+        return MIN_VOLUME
+    try:
+        return float(raw_volume)
+    except ValueError:
+        print('Failed to parse volume (raw value: %s), assuming volume is 0' % raw_volume)
+        return MIN_VOLUME
 
 
 def get_binary(on_off):
