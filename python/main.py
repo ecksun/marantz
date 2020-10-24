@@ -6,15 +6,16 @@ import itertools
 import os
 from modules.Input import InputModule
 from modules.Power import PowerModule
-from modules.Status import StatusModule
+from modules.Status import StatusModule, print_status
 from modules.Volume import VolumeModule
 from modules.SoundMode import SoundModeModule
-from zone import ZoneHandler
+from zone import ZoneHandler, Zones
 
 config = ConfigParser()
 config.read(os.path.expanduser('~/.marantzrc'))
 
 parser = argparse.ArgumentParser()
+parser.set_defaults(func=lambda _: print_status([Zones.MainZone]))
 subparsers = parser.add_subparsers(dest='action')
 
 zone_handler = ZoneHandler(config)
