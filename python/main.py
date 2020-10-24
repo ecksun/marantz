@@ -8,6 +8,7 @@ from modules.Input import InputModule
 from modules.Power import PowerModule
 from modules.Status import StatusModule
 from modules.Volume import VolumeModule
+from modules.SoundMode import SoundModeModule
 from zone import ZoneHandler
 
 config = ConfigParser()
@@ -23,7 +24,8 @@ modules = [
     InputModule(zone_handler, config),
     VolumeModule(zone_handler),
     PowerModule(zone_handler),
-    StatusModule(zone_handler)
+    StatusModule(zone_handler),
+    SoundModeModule(),
 ]
 module_actions = map(lambda module: module.get_actions(), modules)
 actions = itertools.chain(*module_actions)

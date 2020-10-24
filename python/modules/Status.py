@@ -17,7 +17,8 @@ def get_status(zone):
         'mute': get_binary(get_property('Mute', status_xml)),
         'zonepower': get_binary(get_property('ZonePower', status_xml)),
         'power': get_binary(get_property('Power', status_xml)),
-        'input': get_property('InputFuncSelect', status_xml)
+        'input': get_property('InputFuncSelect', status_xml),
+        'mode': get_property('selectSurround', status_xml).strip()
     }
 
 
@@ -50,6 +51,7 @@ def print_status(zones):
     main_power = statuses[0]['power']
 
     print('{:<16}{}'.format('Power:', 'On' if main_power else 'Off'))
+    print('{:<16}{}'.format('Sound mode:', statuses[0]['mode']))
     for status in statuses:
         print()
         print('{:<16}{}'.format('Zone:', status['name']))
